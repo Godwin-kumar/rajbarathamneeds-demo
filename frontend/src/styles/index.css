@@ -1,0 +1,32 @@
+@import './theme.css';
+@import './animations.css';
+@import './responsive.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color: #292929;
+    background-color: #FFFFFF;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #292929;
+    background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    letter-spacing: 0.02em;
+    color: #292929;
+  }
+}

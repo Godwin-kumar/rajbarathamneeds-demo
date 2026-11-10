@@ -1,0 +1,25 @@
+/**
+ * Luxury Jewellery Theme Tokens & Variables — RAJ BARATHAM NEEDS
+ */
+:root {
+  --color-luxury-white: #FFFFFF;
+  --color-luxury-ivory: #F8F3E9;
+  --color-luxury-ivory-light: #FDFBF6;
+  --color-luxury-text-primary: #292522;
+  --color-luxury-text-secondary: #777777;
+  --color-luxury-border: #EAE6DE;
+
+  /* Heritage Palette */
+  --color-heritage-ivory: #F8F3E9;
+  --color-heritage-white: #FFFFFF;
+  --color-heritage-champagne-gold: #C6A15B;
+  --color-heritage-antique-gold: #B08D45;
+  --color-heritage-charcoal: #292522;
+  --color-heritage-beige: #EFE5D5;
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.15s ease-out;
+}

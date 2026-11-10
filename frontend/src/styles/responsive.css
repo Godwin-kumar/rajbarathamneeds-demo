@@ -1,0 +1,21 @@
+/**
+ * Responsive utility enhancements for luxury layout
+ */
+@media (max-width: 640px) {
+  /* Prevent horizontal overflow */
+  body, html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Touch action optimization */
+  .touch-scroll-x {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .touch-scroll-item {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+}

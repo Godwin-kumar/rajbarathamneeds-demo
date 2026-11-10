@@ -1,0 +1,285 @@
+
+/* ======================================
+   PREMIUM CAMPAIGN HERO
+   RAJ BARATHAM NEEDS
+====================================== */
+
+.campaign-hero {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 48% 52%;
+  min-height: 580px;
+  height: min(580px, calc(100vh - 170px));
+  background: #F8F1E5;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+}
+
+/* LEFT IMAGE */
+
+.campaign-hero__image {
+  width: 100%;
+  height: 100%;
+  min-height: 580px;
+  overflow: hidden;
+}
+
+.campaign-hero__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* RIGHT CONTENT */
+
+.campaign-hero__content {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 580px;
+  background: #F8F1E5;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  padding: 45px 7%;
+  overflow: hidden;
+}
+
+/* CONTENT ABOVE DECORATIONS */
+
+.campaign-hero__content > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* GOLD CORNER ARTWORK */
+
+.campaign-hero__content::before,
+.campaign-hero__content::after {
+  content: "";
+  position: absolute;
+  width: 175px;
+  height: 175px;
+  background-image: url('/images/gold-mandala.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.campaign-hero__content::before {
+  top: 0;
+  right: 0;
+}
+
+.campaign-hero__content::after {
+  bottom: 0;
+  right: 0;
+  transform: rotate(90deg);
+}
+
+/* DIAMOND */
+
+.campaign-diamond {
+  width: 48px;
+  height: 48px;
+  border: 1px solid #D6B46A;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #B08D45;
+  background: #FFFDF8;
+  margin-bottom: 18px;
+}
+
+/* PROMOTIONAL LABEL */
+
+.campaign-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  line-height: 1.7;
+  color: #B08D45;
+  margin: 0 0 18px;
+}
+
+/* MAIN HEADING */
+
+.campaign-hero__content h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(34px, 3.2vw, 52px);
+  line-height: 1.13;
+  font-weight: 400;
+  letter-spacing: -1px;
+  color: #292522;
+  max-width: 650px;
+  margin: 0 0 25px;
+}
+
+/* GOLD DIVIDER */
+
+.campaign-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #B08D45;
+  margin-bottom: 25px;
+}
+
+.campaign-divider span {
+  width: 75px;
+  height: 1px;
+  background: #D6B46A;
+}
+
+/* DESCRIPTION */
+
+.campaign-description {
+  max-width: 540px;
+  color: #655D53;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0 0 30px;
+}
+
+/* BUTTONS */
+
+.campaign-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.campaign-button {
+  min-height: 55px;
+  padding: 0 25px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.campaign-button--primary {
+  background: #292522;
+  color: #FFFFFF;
+  border: 1px solid #292522;
+}
+
+.campaign-button--secondary {
+  background: transparent;
+  color: #292522;
+  border: 1px solid #C6A15B;
+}
+
+.campaign-button:hover {
+  background: #B08D45;
+  border-color: #B08D45;
+  color: #FFFFFF;
+}
+
+/* DECORATIVE FOOTER */
+
+.campaign-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+  color: #B08D45;
+}
+
+.campaign-footer span:not(.campaign-footer-symbol) {
+  width: 75px;
+  height: 1px;
+  background: #D6B46A;
+}
+
+.campaign-footer-symbol {
+  font-size: 25px;
+}
+
+/* CAROUSEL CONTROLS */
+
+.campaign-controls {
+  position: absolute;
+  bottom: 14px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #8D744A;
+  font-size: 11px;
+  z-index: 3;
+}
+
+.campaign-controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #8D744A;
+  cursor: pointer;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+  .campaign-hero {
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-hero__image {
+    height: 430px;
+    min-height: 430px;
+  }
+
+  .campaign-hero__content {
+    min-height: 480px;
+    padding: 45px 22px;
+  }
+
+  .campaign-hero__content h1 {
+    font-size: 36px;
+  }
+
+  .campaign-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  .campaign-description {
+    font-size: 14px;
+  }
+
+  .campaign-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .campaign-button {
+    width: 100%;
+  }
+
+  .campaign-hero__content::before,
+  .campaign-hero__content::after {
+    width: 110px;
+    height: 110px;
+  }
+}
