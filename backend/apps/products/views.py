@@ -28,6 +28,14 @@ class ProductListView(generics.ListAPIView):
 
         qs = Product.objects.all().prefetch_related('side_images')
 
+        category = self.request.query_params.get('category')
+        if category and category.lower() != 'all':
+            category = category.strip()
+            if category.isdigit():
+                qs = qs.filter(category_id=int(category))
+            else:
+                qs = qs.filter(category__name__iexact=category)
+
         search = (
             self.request.query_params.get('search')
             or self.request.query_params.get('q')
