@@ -13,6 +13,8 @@ function getCookie(name) {
   return cookieValue;
 }
 
+let memoryCsrfToken = null;
+
 const rawApiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
 const BASE_URL = rawApiBase
   ? (rawApiBase.endsWith('/erp') ? rawApiBase : `${rawApiBase}/erp`)
@@ -39,7 +41,7 @@ async function request(endpoint, options = {}) {
     ...(options.headers || {}),
   };
 
-  const csrfToken = getCookie('csrftoken');
+  const csrfToken = getCookie('csrftoken') || memoryCsrfToken;
   if (csrfToken) {
     headers['X-CSRFToken'] = csrfToken;
   }
@@ -66,6 +68,9 @@ async function request(endpoint, options = {}) {
     const contentType = response.headers.get('content-type') || '';
     if (contentType.includes('application/json')) {
       data = await response.json();
+      if (data && data.csrf_token) {
+        memoryCsrfToken = data.csrf_token;
+      }
     } else {
       data = await response.text();
     }

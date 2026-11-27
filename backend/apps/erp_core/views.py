@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 
 from rest_framework import viewsets, generics, status, views
 from rest_framework.decorators import action
@@ -303,6 +304,7 @@ class ERPLoginView(views.APIView):
 
         return Response({
             'message': 'Login successful',
+            'csrf_token': get_token(request),
             'user': {
                 'id': user.id,
                 'username': user.username,
@@ -364,6 +366,7 @@ class ERPCurrentUserView(views.APIView):
 
         return Response({
             'authenticated': True,
+            'csrf_token': get_token(request),
             'id': user.id,
             'username': user.username,
             'email': user.email,
