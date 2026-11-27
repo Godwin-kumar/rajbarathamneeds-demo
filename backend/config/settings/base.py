@@ -202,17 +202,12 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 cors_origins = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,https://erp.rajbaratham.com,https://www.rajbaratham.com'
+    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,https://erp.rajbaratham.com,https://www.rajbaratham.com,https://rajbarathamneeds-demo-11.onrender.com'
 )
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:5174',
-    'http://127.0.0.1:5174',
-    'https://erp.rajbaratham.com',
-    'https://www.rajbaratham.com',
-]
+csrf_origins = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174,https://erp.rajbaratham.com,https://www.rajbaratham.com,https://rajbarathamneeds-demo-11.onrender.com'
+)
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',') if origin.strip()]
