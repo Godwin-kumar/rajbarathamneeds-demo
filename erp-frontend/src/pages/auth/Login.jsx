@@ -21,9 +21,9 @@ export default function Login() {
     try {
       const result = await login(username, password);
 
-if (result?.success) {
-  window.location.href = '/dashboard';
-}
+      if (result?.success) {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err) {
       console.error('Login error:', err);
       setError(
