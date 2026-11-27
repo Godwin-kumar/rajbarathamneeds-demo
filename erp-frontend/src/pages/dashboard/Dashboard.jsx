@@ -71,7 +71,7 @@ export default function Dashboard() {
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#C99A35]' : 'text-black'}`} />
             </button>
             <a
-              href="http://localhost:5173"
+              href={import.meta.env.VITE_STOREFRONT_URL || 'https://rajbarathamneeds-demo-1.onrender.com'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-[#EFE5D5] hover:border-[#C99A35] text-black rounded-xl text-xs font-bold shadow-2xs transition-all"

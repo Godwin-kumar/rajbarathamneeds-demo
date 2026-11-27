@@ -182,7 +182,7 @@ export const ERPLayout = () => {
 
             {/* LIVE STOREFRONT SHORTCUT */}
             <a
-              href="http://localhost:5173"
+              href={import.meta.env.VITE_STOREFRONT_URL || 'https://rajbarathamneeds-demo-1.onrender.com'}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EFE5D5] text-xs font-semibold text-black hover:bg-[#F8F1E5] hover:text-[#C99A35] transition-all"
