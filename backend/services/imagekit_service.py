@@ -83,7 +83,41 @@ class ImageKitService:
                 'height': height,
             }
         except Exception as e:
-            logger.error(f"ImageKit upload failed for {file_name}: {e}", exc_info=True)
+            logger.warning(f"ImageKit cloud upload failed for {file_name}: {e}. Falling back to local media storage.")
+            return self._save_local_fallback(file_data, file_name, folder)
+
+    def _save_local_fallback(self, file_data, file_name, folder="/jewellery/products/"):
+        """
+        Saves file directly to Django MEDIA_ROOT as a safe fallback when cloud CDN is unreachable.
+        """
+        try:
+            import uuid
+            rel_folder = folder.strip("/\\")
+            target_dir = os.path.join(settings.MEDIA_ROOT, rel_folder)
+            os.makedirs(target_dir, exist_ok=True)
+            clean_name = os.path.basename(file_name).replace(' ', '_')
+            safe_name = f"{uuid.uuid4().hex[:8]}_{clean_name}"
+            target_path = os.path.join(target_dir, safe_name)
+            
+            with open(target_path, 'wb') as dest:
+                if isinstance(file_data, bytes):
+                    dest.write(file_data)
+                elif hasattr(file_data, 'read'):
+                    dest.write(file_data.read())
+                else:
+                    dest.write(str(file_data).encode('utf-8'))
+
+            media_url = f"{settings.MEDIA_URL.rstrip('/')}/{rel_folder}/{safe_name}"
+            logger.info(f"Saved file to local media storage: {media_url}")
+            return {
+                'file_id': f'local_{safe_name}',
+                'url': media_url,
+                'name': safe_name,
+                'width': 1000,
+                'height': 1000,
+            }
+        except Exception as local_err:
+            logger.error(f"Local media storage fallback failed for {file_name}: {local_err}", exc_info=True)
             raise
 
     def delete_image(self, file_id):

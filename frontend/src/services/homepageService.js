@@ -9,7 +9,7 @@ export const homepageService = {
    * @returns {Promise<{ data: object | null, error: string | null }>}
    */
   async getHomepageData() {
-    return await apiClient.get('/store/home/');
+    return await apiClient.get('/home/home/');
   },
 };
 

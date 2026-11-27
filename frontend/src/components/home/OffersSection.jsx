@@ -206,9 +206,13 @@ export const OffersSection = ({ promotions: initialPromotions = [], isStandalone
     }, 2000);
   };
 
-  // Shop Now navigation handler respecting destination from backend
+  // Shop Now navigation handler opening individual Special Offer Details
   const handleShopNow = (e, promo) => {
     e.preventDefault();
+    if (promo && promo.id) {
+      navigate(`/offers/${promo.id}`);
+      return;
+    }
     const destination = promo.destination_link || '#shop-by-category';
 
     if (destination.startsWith('#')) {

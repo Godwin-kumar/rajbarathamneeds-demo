@@ -15,9 +15,7 @@ export const erpService = {
   createProduct: (data) => api.post('/products/', data),
   updateProduct: (id, data) => api.put(`/products/${id}/`, data),
   deleteProduct: (id) => api.delete(`/products/${id}/`),
-  uploadProductImages: (id, formData) => api.post(`/products/${id}/upload-images/`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  }),
+  uploadProductImages: (id, formData) => api.post(`/products/${id}/upload-images/`, formData),
   deleteProductImage: (productId, imageId) => api.delete(`/products/${productId}/delete-image/${imageId}/`),
 
   // Categories

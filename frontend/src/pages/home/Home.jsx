@@ -82,6 +82,19 @@ export const Home = () => {
     };
   }, []);
 
+  // Handle smooth scroll when navigating from other pages with hash (e.g. /#shop-by-category)
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 200);
+      }
+    }
+  }, []);
+
   // Category selection handler — zero page reloads, instant update
   const handleSelectCategory = async (catId, catName = 'ALL') => {
     setSelectedCategoryId(catId);

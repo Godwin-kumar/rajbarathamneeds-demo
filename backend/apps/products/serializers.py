@@ -1,110 +1,112 @@
-from rest_framework import serializers
-from .models import Product, ProductImage, FeaturedProduct
-from apps.categories.serializers import CategorySerializer
-from services.imagekit_service import imagekit_service
 
-class ProductImageSerializer(serializers.ModelSerializer):
-    card_url = serializers.SerializerMethodField()
-    thumbnail_url = serializers.SerializerMethodField()
+import re
+from rest_framework import serializers
+from .models import Product, ProductSideImage
+
+
+class ProductSideImageSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = ProductImage
+        model = ProductSideImage
+
         fields = [
             'id',
             'image_url',
-            'card_url',
-            'thumbnail_url',
-            'alt_text',
             'display_order',
-            'is_primary',
         ]
-
-    def get_card_url(self, obj):
-        return imagekit_service.get_product_card_url(obj.image_url) if obj.image_url else ""
-
-    def get_thumbnail_url(self, obj):
-        return imagekit_service.get_thumbnail_url(obj.image_url) if obj.image_url else ""
 
 
 class ProductListSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    primary_image = serializers.SerializerMethodField()
-    images = ProductImageSerializer(many=True, read_only=True)
+
+    side_images = ProductSideImageSerializer(
+        many=True,
+        read_only=True
+    )
+    category_name = serializers.CharField(
+        source='category.name',
+        read_only=True,
+        default=''
+    )
+    category = serializers.SerializerMethodField()
+    sku = serializers.SerializerMethodField()
+    weight = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
+
         fields = [
             'id',
             'name',
-            'slug',
-            'sku',
             'price',
-            'sale_price',
-            'stock_quantity',
+            'description',
+            'dimensions',
+            'main_image',
+            'side_images',
             'category',
-            'primary_image',
-            'images',
-            'is_featured',
-            'is_new_arrival',
-            'created_at',
+            'category_name',
+            'sku',
+            'weight',
         ]
 
-    def get_primary_image(self, obj):
-        img = obj.primary_image
-        if not img:
-            return None
-        return ProductImageSerializer(img).data
+    def get_category(self, obj):
+        if obj.category:
+            return {'id': obj.category.id, 'name': obj.category.name}
+        return None
+
+    def get_sku(self, obj):
+        if obj.dimensions and ('-' in obj.dimensions or 'SKU' in obj.dimensions.upper()):
+            return obj.dimensions
+        return f"NG-{obj.id:04d}"
+
+    def get_weight(self, obj):
+        text = f"{obj.dimensions or ''} {obj.description or ''}"
+        match = re.search(r'(\d+(?:\.\d+)?\s*(?:g|gm|grams|kg))', text, re.IGNORECASE)
+        return match.group(1) if match else None
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    primary_image = serializers.SerializerMethodField()
-    images = ProductImageSerializer(many=True, read_only=True)
-    detail_image_url = serializers.SerializerMethodField()
+
+    side_images = ProductSideImageSerializer(
+        many=True,
+        read_only=True
+    )
+    category_name = serializers.CharField(
+        source='category.name',
+        read_only=True,
+        default=''
+    )
+    category = serializers.SerializerMethodField()
+    sku = serializers.SerializerMethodField()
+    weight = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
+
         fields = [
             'id',
             'name',
-            'slug',
-            'sku',
-            'short_description',
-            'description',
             'price',
-            'sale_price',
-            'stock_quantity',
+            'description',
+            'dimensions',
+            'main_image',
+            'side_images',
             'category',
-            'primary_image',
-            'images',
-            'detail_image_url',
-            'is_featured',
-            'is_new_arrival',
-            'created_at',
-            'updated_at',
+            'category_name',
+            'sku',
+            'weight',
         ]
 
-    def get_primary_image(self, obj):
-        img = obj.primary_image
-        if not img:
-            return None
-        return ProductImageSerializer(img).data
+    def get_category(self, obj):
+        if obj.category:
+            return {'id': obj.category.id, 'name': obj.category.name}
+        return None
 
-    def get_detail_image_url(self, obj):
-        img = obj.primary_image
-        if img and img.image_url:
-            return imagekit_service.get_detail_url(img.image_url)
-        return ""
+    def get_sku(self, obj):
+        if obj.dimensions and ('-' in obj.dimensions or 'SKU' in obj.dimensions.upper()):
+            return obj.dimensions
+        return f"NG-{obj.id:04d}"
 
-
-class FeaturedProductSerializer(serializers.ModelSerializer):
-    product = ProductListSerializer(read_only=True)
-
-    class Meta:
-        model = FeaturedProduct
-        fields = [
-            'id',
-            'display_order',
-            'is_active',
-            'product',
-        ]
+    def get_weight(self, obj):
+        text = f"{obj.dimensions or ''} {obj.description or ''}"
+        match = re.search(r'(\d+(?:\.\d+)?\s*(?:g|gm|grams|kg))', text, re.IGNORECASE)
+        return match.group(1) if match else None

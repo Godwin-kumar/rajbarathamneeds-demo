@@ -1,104 +1,124 @@
-from rest_framework import generics, filters
+
+from rest_framework import generics
 from rest_framework.permissions import AllowAny
+
 from django.db.models import Q
-from .models import Product, FeaturedProduct
-from .serializers import ProductListSerializer, ProductDetailSerializer
+from django.http import Http404
+
+from .models import Product
+from .serializers import (
+    ProductListSerializer,
+    ProductDetailSerializer
+)
+
 
 class ProductListView(generics.ListAPIView):
     """
     GET /api/products/
+
     Supports:
     - Search: ?search=gold or ?q=ring
-    - Category filter: ?category=rings or ?category_id=1
-    - Featured filter: ?featured=true
-    - New arrival filter: ?new=true
     - Pagination
     """
+
     serializer_class = ProductListSerializer
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        qs = Product.objects.filter(is_active=True).select_related('category').prefetch_related('images')
 
-        # Search
-        search = self.request.query_params.get('search') or self.request.query_params.get('q')
+        qs = Product.objects.all().prefetch_related('side_images')
+
+        search = (
+            self.request.query_params.get('search')
+            or self.request.query_params.get('q')
+        )
+
         if search:
             search = search.strip()
+
             qs = qs.filter(
                 Q(name__icontains=search) |
-                Q(sku__icontains=search) |
-                Q(short_description__icontains=search) |
                 Q(description__icontains=search) |
-                Q(category__name__icontains=search)
+                Q(dimensions__icontains=search)
             )
 
-        # Category filter
-        category = self.request.query_params.get('category')
-        if category:
-            if str(category).isdigit():
-                qs = qs.filter(category_id=int(category))
-            else:
-                qs = qs.filter(Q(category__slug=category) | Q(category__name__iexact=category))
-
-        # Quick flag filters
-        if self.request.query_params.get('featured') == 'true':
-            qs = qs.filter(is_featured=True)
-        if self.request.query_params.get('new') == 'true':
-            qs = qs.filter(is_new_arrival=True)
-
-        return qs.order_by('-created_at')
+        return qs.order_by('-id')
 
 
 class FeaturedProductListView(generics.ListAPIView):
     """
     GET /api/products/featured/
-    Returns featured jewellery products ordered by display_order.
+
+    Returns the latest products.
     """
+
     serializer_class = ProductListSerializer
     permission_classes = [AllowAny]
     pagination_class = None
 
     def get_queryset(self):
-        # Retrieve active products from FeaturedProduct entries or products marked is_featured
-        featured_entries = FeaturedProduct.objects.filter(
-            is_active=True,
-            product__is_active=True
-        ).select_related('product__category').prefetch_related('product__images').order_by('display_order', '-created_at')
 
-        if featured_entries.exists():
-            return [entry.product for entry in featured_entries]
-
-        # Fallback to products flagged with is_featured=True
-        return Product.objects.filter(
-            is_featured=True,
-            is_active=True
-        ).select_related('category').prefetch_related('images').order_by('-created_at')[:8]
+        return Product.objects.all().prefetch_related(
+            'side_images'
+        ).order_by('-id')[:8]
 
 
 class NewArrivalListView(generics.ListAPIView):
     """
     GET /api/products/new-arrivals/
-    Returns new arrivals ordered by latest creation.
+
+    Returns recently added products.
     """
+
     serializer_class = ProductListSerializer
     permission_classes = [AllowAny]
     pagination_class = None
 
     def get_queryset(self):
-        return Product.objects.filter(
-            is_new_arrival=True,
-            is_active=True
-        ).select_related('category').prefetch_related('images').order_by('-created_at')[:8]
+
+        return Product.objects.all().prefetch_related(
+            'side_images'
+        ).order_by('-id')[:8]
 
 
 class ProductDetailView(generics.RetrieveAPIView):
     """
-    GET /api/products/{slug}/
-    Returns complete product details, including all ordered product images.
+    GET /api/products/{slug_or_id}/
+
+    Returns:
+    - Product name
+    - Price
+    - Description
+    - Dimensions
+    - Main image
+    - Five side images
     """
+
     serializer_class = ProductDetailSerializer
     permission_classes = [AllowAny]
-    lookup_field = 'slug'
+
+    def get_object(self):
+
+        lookup = self.kwargs.get('slug', '').strip()
+
+        qs = self.get_queryset()
+
+        if lookup.isdigit():
+
+            obj = qs.filter(id=int(lookup)).first()
+
+            if obj:
+                return obj
+
+        obj = qs.filter(name__iexact=lookup).first()
+
+        if obj:
+            return obj
+
+        raise Http404(f"Product '{lookup}' not found")
 
     def get_queryset(self):
-        return Product.objects.filter(is_active=True).select_related('category').prefetch_related('images')
+
+        return Product.objects.prefetch_related(
+            'side_images'
+        )

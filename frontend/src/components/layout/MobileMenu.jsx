@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Heart, User, Search, ArrowRight } from 'lucide-react';
+import { X, Heart, User, Search, ShoppingBag, ArrowRight, Package } from 'lucide-react';
 import { navigationLinks } from '../../data/navigation';
 import { siteConfig } from '../../config/siteConfig';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 /**
  * Mobile Navigation Drawer
  * Smooth slide-out menu with scroll locking and accessible touch targets.
  */
 export const MobileMenu = ({ isOpen, onClose, onOpenSearch }) => {
-  const { count: wishlistCount } = useWishlist();
+  const { count: wishlistCount, openWishlist } = useWishlist();
+  const { count: cartCount, openCart } = useCart();
+  const { user, isAuthenticated } = useAuth();
 
   // Prevent background scrolling while menu is open
   useEffect(() => {
@@ -100,10 +104,13 @@ export const MobileMenu = ({ isOpen, onClose, onOpenSearch }) => {
 
           {/* Quick client links */}
           <div className="pt-6 space-y-3">
-            <Link
-              to="/wishlist"
-              onClick={onClose}
-              className="flex items-center justify-between py-2.5 text-xs uppercase tracking-widest text-luxury-text-primary font-medium"
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                openWishlist();
+              }}
+              className="w-full flex items-center justify-between py-2.5 text-xs uppercase tracking-widest text-luxury-text-primary font-medium"
             >
               <span className="flex items-center">
                 <Heart className="w-4 h-4 mr-3" />
@@ -114,15 +121,51 @@ export const MobileMenu = ({ isOpen, onClose, onOpenSearch }) => {
                   {wishlistCount}
                 </span>
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                openCart();
+              }}
+              className="w-full flex items-center justify-between py-2.5 text-xs uppercase tracking-widest text-luxury-text-primary font-medium"
+            >
+              <span className="flex items-center">
+                <ShoppingBag className="w-4 h-4 mr-3" />
+                Shopping Bag
+              </span>
+              {cartCount > 0 && (
+                <span className="px-2 py-0.5 text-[10px] bg-luxury-text-primary text-luxury-white rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
+            <Link
+              to="/orders"
+              onClick={onClose}
+              className="w-full flex items-center justify-between py-2.5 text-xs uppercase tracking-widest text-luxury-text-primary font-medium"
+            >
+              <span className="flex items-center">
+                <Package className="w-4 h-4 mr-3" />
+                My Orders & Tracking
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-luxury-border" />
             </Link>
 
             <Link
-              to="/account"
+              to="/signin"
               onClick={onClose}
-              className="flex items-center py-2.5 text-xs uppercase tracking-widest text-luxury-text-primary font-medium"
+              className="flex items-center justify-between py-2.5 text-xs uppercase tracking-widest text-luxury-text-primary font-medium"
             >
-              <User className="w-4 h-4 mr-3" />
-              Account
+              <span className="flex items-center">
+                <User className="w-4 h-4 mr-3" />
+                {isAuthenticated ? (user?.first_name || user?.username || 'My Account') : 'Sign In'}
+              </span>
+              {isAuthenticated && (
+                <span className="w-2 h-2 rounded-full bg-luxury-gold" />
+              )}
             </Link>
           </div>
         </nav>

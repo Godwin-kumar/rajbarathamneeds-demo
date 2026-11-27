@@ -7,13 +7,11 @@ from .serializers import CategorySerializer
 class CategoryListView(generics.ListAPIView):
     """
     GET /api/categories/
-    Returns all active jewellery categories ordered by display_order.
+    Returns all jewellery categories.
     """
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
     pagination_class = None
 
     def get_queryset(self):
-        return Category.objects.filter(is_active=True).annotate(
-            active_products_count=Count('products', filter=Q(products__is_active=True))
-        ).order_by('display_order', 'name')
+        return Category.objects.all().order_by('name')

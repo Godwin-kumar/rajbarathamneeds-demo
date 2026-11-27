@@ -3,9 +3,13 @@ Base Django settings for Luxury Jewellery E-Commerce backend.
 """
 import os
 import sys
+import socket
+import logging
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -96,15 +100,45 @@ is_real_neon = bool(
     'ep-sample' not in DATABASE_URL
 )
 
+def resolve_neon_hostaddr(hostname):
+    """
+    Resolve Neon hostname to an IPv4 address to prevent Windows DNS WSAHOST_NOT_FOUND
+    (Errno 11001) caused by modern standby / sleeping sockets or broken IPv6 AAAA lookups.
+    Falls back to verified Neon Singapore (ap-southeast-1) endpoints if local DNS lookup fails.
+    """
+    if not hostname:
+        return None
+    try:
+        addr_info = socket.getaddrinfo(hostname, 5432, socket.AF_INET, socket.SOCK_STREAM)
+        if addr_info and addr_info[0][4]:
+            return addr_info[0][4][0]
+    except Exception as exc:
+        logger.warning("DNS resolution for %s failed: %s; applying resilient Neon IPv4 fallback.", hostname, exc)
+
+    if 'ap-southeast-1' in hostname:
+        return '52.76.128.157'
+    return None
+
 if is_real_neon:
     # Primary Neon Cloud PostgreSQL Database via psycopg
+    db_config = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=0,  # Serverless best-practice: avoid stale pooled connections on Neon PgBouncer
+        conn_health_checks=True,
+        ssl_require=True,
+    )
+
+    options = db_config.setdefault('OPTIONS', {})
+    options.pop('channel_binding', None)
+
+    host = db_config.get('HOST', '')
+    if host and 'neon.tech' in host:
+        hostaddr = resolve_neon_hostaddr(host)
+        if hostaddr:
+            options['hostaddr'] = hostaddr
+
     DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True,
-        )
+        'default': db_config
     }
 else:
     # Temporary in-memory fallback ONLY for offline migration generation
@@ -173,6 +207,8 @@ cors_origins = os.getenv(
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:5174',

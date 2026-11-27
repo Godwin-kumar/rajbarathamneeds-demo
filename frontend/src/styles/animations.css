@@ -21,6 +21,150 @@
   }
 }
 
+/* =======================================================
+   LUXURY HERITAGE HERO ANIMATIONS
+   ======================================================= */
+
+/* Slow rotating mandalas */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinSlowReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* Radiant Prabhavali Halo breathing pulse */
+@keyframes haloBreathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.22;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.38;
+  }
+}
+
+/* Floating sacred temple flower petals */
+@keyframes floatDrift1 {
+  0% {
+    transform: translateY(-20px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(60px) translateX(25px) rotate(45deg);
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(140px) translateX(50px) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+@keyframes floatDrift2 {
+  0% {
+    transform: translateY(-20px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.65;
+  }
+  55% {
+    transform: translateY(70px) translateX(-30px) rotate(-50deg);
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(150px) translateX(-60px) rotate(-100deg);
+    opacity: 0;
+  }
+}
+
+/* Celestial starlight / jewellery sparkles */
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.25) rotate(45deg);
+    opacity: 0.9;
+  }
+}
+
+/* Golden ambient sunburst aura pulse */
+@keyframes auraPulse {
+  0%, 100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.06);
+  }
+}
+
+/* Animation utility classes */
+.animate-spin-slow {
+  animation: spinSlow 55s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spinSlowReverse 65s linear infinite;
+}
+
+.animate-halo-breathe {
+  animation: haloBreathe 7s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.animate-float-drift-1 {
+  animation: floatDrift1 12s ease-in-out infinite;
+}
+
+.animate-float-drift-2 {
+  animation: floatDrift2 14s ease-in-out infinite 3s;
+}
+
+.animate-float-drift-3 {
+  animation: floatDrift1 16s ease-in-out infinite 6s;
+}
+
+.animate-sparkle-1 {
+  animation: sparkleTwinkle 3.2s ease-in-out infinite;
+}
+
+.animate-sparkle-2 {
+  animation: sparkleTwinkle 4.5s ease-in-out infinite 1.2s;
+}
+
+.animate-sparkle-3 {
+  animation: sparkleTwinkle 3.8s ease-in-out infinite 2.1s;
+}
+
+.animate-aura-pulse {
+  animation: auraPulse 8s ease-in-out infinite;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

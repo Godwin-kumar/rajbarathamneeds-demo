@@ -26,25 +26,25 @@ export default function ShippingPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-[#541D2C]">Logistics & Shipments</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+          <h1 className="text-2xl font-serif font-bold text-black">Logistics & Shipments</h1>
+          <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
             Manage parcel dispatches, domestic courier partners (Blue Dart, DTDC, India Post) and AWB tracking.
           </p>
         </div>
 
         <button
           onClick={fetchShipments}
-          className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-2 bg-white border border-[#E9E2DC] rounded-xl text-xs font-semibold text-gray-700 hover:bg-[#F8F5EF]"
+          className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-2 bg-white border border-[#EFE5D5] rounded-xl text-xs font-semibold text-black hover:bg-[#F8F1E5] transition-all"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#70283A]' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#C99A35]' : ''}`} />
           <span>Refresh</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-[#E9E2DC] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#EFE5D5] shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-[#FAF7F2] text-gray-500 font-semibold border-b border-[#E9E2DC]">
+            <thead className="bg-[#F8F1E5] text-black font-semibold border-b border-[#EFE5D5]">
               <tr>
                 <th className="py-3.5 px-4">AWB / Tracking #</th>
                 <th className="py-3.5 px-4">Order ID</th>
@@ -54,15 +54,15 @@ export default function ShippingPage() {
                 <th className="py-3.5 px-4">Updated</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E9E2DC]">
+            <tbody className="divide-y divide-[#EFE5D5]">
               {loading ? (
                 <tr>
                   <td colSpan="6" className="py-12 text-center text-gray-400">Loading shipments...</td>
                 </tr>
               ) : shipments.length > 0 ? (
                 shipments.map((s) => (
-                  <tr key={s.id} className="hover:bg-[#F8F5EF]/60">
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#70283A]">{s.tracking_number || 'PENDING-AWB'}</td>
+                  <tr key={s.id} className="hover:bg-[#F3EBDD]/40">
+                    <td className="py-3.5 px-4 font-mono font-bold text-black">{s.tracking_number || 'PENDING-AWB'}</td>
                     <td className="py-3.5 px-4 font-mono text-gray-800">{s.order?.order_number || 'Order'}</td>
                     <td className="py-3.5 px-4 font-semibold text-gray-700">{s.carrier || 'Blue Dart Express'}</td>
                     <td className="py-3.5 px-4 text-gray-600">{s.destination_city || 'Tamil Nadu'}</td>

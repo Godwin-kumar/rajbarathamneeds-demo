@@ -64,15 +64,12 @@ export const AuthProvider = ({ children }) => {
 
   const hasPermission = (moduleName) => {
     if (!user) return false;
+    // Core management modules are accessible to all authenticated ERP staff
+    if (['dashboard', 'products', 'categories', 'promotions'].includes(moduleName)) {
+      return true;
+    }
     if (isSuperAdmin) return true;
-    if (isAdmin) {
-      const adminModules = ['dashboard', 'products', 'categories', 'promotions', 'orders', 'customers', 'inventory', 'suppliers', 'purchases', 'sales', 'shipping', 'reports'];
-      return adminModules.includes(moduleName);
-    }
-    if (user.role === 'MANAGER') {
-      const managerModules = ['dashboard', 'orders', 'customers', 'inventory', 'sales', 'reports', 'shipping'];
-      return managerModules.includes(moduleName);
-    }
+    if (isAdmin) return true;
     return Boolean(user.permissions?.[moduleName]);
   };
 

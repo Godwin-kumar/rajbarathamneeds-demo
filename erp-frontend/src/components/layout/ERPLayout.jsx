@@ -20,16 +20,6 @@ export const ERPLayout = () => {
     { label: 'Products', path: '/products', icon: Package, module: 'products' },
     { label: 'Categories', path: '/categories', icon: FolderTree, module: 'categories' },
     { label: 'Promotions', path: '/promotions', icon: Tag, module: 'promotions' },
-    { label: 'Orders', path: '/orders', icon: ShoppingBag, module: 'orders' },
-    { label: 'Customers', path: '/customers', icon: Users, module: 'customers' },
-    { label: 'Inventory', path: '/inventory', icon: Boxes, module: 'inventory' },
-    { label: 'Suppliers', path: '/suppliers', icon: Truck, module: 'suppliers' },
-    { label: 'Purchases', path: '/purchases', icon: ShoppingCart, module: 'purchases' },
-    { label: 'Finance & Sales', path: '/finance', icon: Coins, module: 'sales' },
-    { label: 'Shipping', path: '/shipping', icon: Navigation, module: 'shipping' },
-    { label: 'Reports', path: '/reports', icon: BarChart3, module: 'reports' },
-    { label: 'Employees', path: '/employees', icon: UserCheck, module: 'employees', adminOnly: true },
-    { label: 'Settings & Audit', path: '/settings', icon: Settings, module: 'settings', adminOnly: true },
   ];
 
   const filteredNav = navItems.filter((item) => {

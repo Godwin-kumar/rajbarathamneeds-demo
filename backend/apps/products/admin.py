@@ -1,162 +1,264 @@
+
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html
-from .models import Product, ProductImage, FeaturedProduct
+
+from .models import Product, ProductSideImage
 from services.imagekit_service import imagekit_service
 
-class ProductImageInlineForm(forms.ModelForm):
-    upload_file = forms.ImageField(
+
+# ==========================================================
+# MAIN PRODUCT IMAGE FORM
+# ==========================================================
+
+class ProductAdminForm(forms.ModelForm):
+
+    upload_main_image = forms.ImageField(
         required=False,
-        label="Upload Image File",
-        help_text="Upload original product photograph to ImageKit."
+        label="Choose Main Product Image",
+        help_text="Select the main product image from your computer."
     )
 
     class Meta:
-        model = ProductImage
-        # image_url and imagekit_file_id are removed from manual entry.
-        # They are automatically managed and populated by the backend.
-        fields = ['upload_file', 'alt_text', 'display_order', 'is_primary']
+        model = Product
+        fields = [
+            'name',
+            'category',
+            'price',
+            'description',
+            'dimensions',
+            'upload_main_image',
+        ]
+
+
+# ==========================================================
+# SIDE IMAGE FORM
+# ==========================================================
+
+class ProductSideImageInlineForm(forms.ModelForm):
+
+    upload_file = forms.ImageField(
+        required=False,
+        label="Upload Side Image",
+        help_text="Upload product side image to ImageKit."
+    )
+
+    class Meta:
+        model = ProductSideImage
+        fields = [
+            'upload_file',
+            'display_order',
+        ]
 
     def clean(self):
         cleaned_data = super().clean()
         upload_file = cleaned_data.get('upload_file')
-        # If this is a new row and no file was selected, ensure user provides an image
+
         if not self.instance.pk and not upload_file:
-            if cleaned_data.get('alt_text') or cleaned_data.get('is_primary'):
-                self.add_error('upload_file', 'Please select an image file to upload.')
+            self.add_error(
+                'upload_file',
+                'Please select an image file.'
+            )
+
         return cleaned_data
 
 
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
-    form = ProductImageInlineForm
+# ==========================================================
+# SIDE IMAGE INLINE
+# ==========================================================
+
+class ProductSideImageInline(admin.TabularInline):
+
+    model = ProductSideImage
+    form = ProductSideImageInlineForm
+
     extra = 1
-    # Exactly matching the user requirements:
-    # 1. Upload Image File (file upload field)
-    # 2. Image Preview (readonly)
-    # 3. Alt Text
-    # 4. Display Order
-    # 5. Is Primary
-    # 6. Delete option (handled by can_delete=True)
-    fields = ('upload_file', 'preview', 'alt_text', 'display_order', 'is_primary')
-    readonly_fields = ('preview',)
+    max_num = 5
     can_delete = True
+
+    fields = (
+        'upload_file',
+        'preview',
+        'display_order',
+    )
+
+    readonly_fields = ('preview',)
 
     def preview(self, obj):
         if obj and obj.image_url:
             return format_html(
-                '<a href="{0}" target="_blank" rel="noopener noreferrer" title="Click to view full image">'
-                '<img src="{0}" style="max-height: 50px; max-width: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #EAE6DE;" />'
-                '</a>',
+                '<img src="{}" style="max-height:60px; max-width:60px; '
+                'object-fit:cover; border-radius:5px;" />',
                 obj.image_url
             )
-        return format_html('<span style="color: #999; font-size: 11px;">[No image yet]</span>')
+
+        return "No image uploaded"
+
     preview.short_description = "Image Preview"
 
 
+# ==========================================================
+# PRODUCT ADMIN
+# ==========================================================
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+
+    form = ProductAdminForm
+
     list_display = (
         'name',
-        'sku',
         'category',
-        'price_formatted',
-        'sale_price_formatted',
-        'stock_quantity',
-        'is_featured',
-        'is_new_arrival',
-        'is_active',
-        'thumbnail_preview',
-        'created_at'
+        'price',
+        'main_image_preview',
     )
-    list_filter = ('category', 'is_active', 'is_featured', 'is_new_arrival', 'created_at')
-    search_fields = ('name', 'sku', 'short_description', 'description')
-    prepopulated_fields = {'slug': ('name',)}
-    list_editable = ('is_featured', 'is_new_arrival', 'is_active', 'stock_quantity')
-    inlines = [ProductImageInline]
+
+    list_select_related = ('category',)
+
+    search_fields = (
+        'name',
+        'description',
+        'category__name',
+    )
+
+    inlines = [
+        ProductSideImageInline,
+    ]
 
     fieldsets = (
-        ('Basic Information', {
-            'fields': ('name', 'slug', 'sku', 'category', 'is_active')
-        }),
-        ('Pricing & Inventory', {
-            'fields': ('price', 'sale_price', 'stock_quantity')
-        }),
-        ('Display Badges & Positioning', {
-            'fields': ('is_featured', 'is_new_arrival')
-        }),
-        ('Descriptions & Editorial Content', {
-            'fields': ('short_description', 'description')
-        }),
+        (
+            'Product Information',
+            {
+                'fields': (
+                    'name',
+                    'category',
+                    'price',
+                    'description',
+                    'dimensions',
+                )
+            }
+        ),
+        (
+            'Main Product Image',
+            {
+                'fields': (
+                    'upload_main_image',
+                    'main_image_preview',
+                )
+            }
+        ),
     )
 
-    def price_formatted(self, obj):
-        return f"₹{obj.price:,.2f}"
-    price_formatted.short_description = "Price"
+    readonly_fields = (
+        'main_image_preview',
+    )
 
-    def sale_price_formatted(self, obj):
-        if obj.sale_price:
-            return f"₹{obj.sale_price:,.2f}"
-        return "-"
-    sale_price_formatted.short_description = "Sale Price"
+    # ------------------------------------------------------
+    # MAIN IMAGE PREVIEW
+    # ------------------------------------------------------
 
-    def thumbnail_preview(self, obj):
-        primary = obj.primary_image
-        if primary and primary.image_url:
+    def main_image_preview(self, obj):
+
+        if obj and obj.main_image:
             return format_html(
-                '<img src="{}" style="max-height: 45px; max-width: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #EAE6DE;" />',
-                primary.image_url
+                '<img src="{}" style="max-height:120px; '
+                'max-width:120px; object-fit:contain; '
+                'border-radius:8px;" />',
+                obj.main_image
             )
-        return "-"
-    thumbnail_preview.short_description = "Photo"
+
+        return "No main image uploaded"
+
+    main_image_preview.short_description = "Main Image Preview"
+
+    # ------------------------------------------------------
+    # UPLOAD MAIN IMAGE TO IMAGEKIT
+    # ------------------------------------------------------
+
+    def save_model(self, request, obj, form, change):
+
+        uploaded = form.cleaned_data.get('upload_main_image')
+
+        if uploaded:
+            product_name = obj.name.replace(' ', '_')
+
+            try:
+                upload_res = imagekit_service.upload_image(
+                    file_obj=uploaded,
+                    file_name=f"{product_name}_main_{uploaded.name}",
+                    folder="/jewellery/products/"
+                )
+
+                image_url = upload_res.get('url')
+
+                if not image_url:
+                    raise ValidationError(
+                        "ImageKit did not return a main image URL."
+                    )
+
+                obj.main_image = image_url
+
+            except Exception as exc:
+                raise ValidationError(
+                    f"Main image upload failed: {exc}"
+                )
+
+        super().save_model(request, obj, form, change)
+
+    # ------------------------------------------------------
+    # UPLOAD AND SAVE SIDE IMAGES
+    # ------------------------------------------------------
 
     def save_formset(self, request, form, formset, change):
+
         instances = formset.save(commit=False)
 
-        # 1. Handle deleted objects with ImageKit synchronization
         for obj in formset.deleted_objects:
-            if isinstance(obj, ProductImage) and obj.imagekit_file_id:
-                imagekit_service.delete_image(obj.imagekit_file_id)
             obj.delete()
 
-        # 2. Process instances (new and existing)
         for instance in instances:
-            if isinstance(instance, ProductImage):
-                inline_form = next(
-                    (f for f in formset.forms if f.instance == instance),
-                    None
-                )
-                if inline_form:
-                    uploaded = inline_form.cleaned_data.get('upload_file')
-                    if uploaded:
-                        sku = instance.product.sku or "general"
-                        # Clean up previous cloud file if replacing
-                        if instance.imagekit_file_id:
-                            imagekit_service.delete_image(instance.imagekit_file_id)
 
+            inline_form = next(
+                (
+                    f for f in formset.forms
+                    if f.instance == instance
+                ),
+                None
+            )
+
+            if inline_form:
+
+                uploaded = inline_form.cleaned_data.get('upload_file')
+
+                if uploaded:
+
+                    product_name = instance.product.name.replace(
+                        ' ', '_'
+                    )
+
+                    try:
                         upload_res = imagekit_service.upload_image(
                             file_obj=uploaded,
-                            file_name=f"prod_{sku}_{uploaded.name}",
-                            folder=f"/jewellery/products/{sku}/"
+                            file_name=f"{product_name}_{uploaded.name}",
+                            folder="/jewellery/products/"
                         )
-                        instance.image_url = upload_res.get('url')
-                        instance.imagekit_file_id = upload_res.get('file_id')
 
-                # Skip empty new inline rows that have neither uploaded file nor existing image_url
-                if not instance.image_url:
-                    continue
+                        image_url = upload_res.get('url')
 
+                        if not image_url:
+                            raise ValidationError(
+                                "ImageKit did not return a side image URL."
+                            )
+
+                        instance.image_url = image_url
+
+                    except Exception as exc:
+                        raise ValidationError(
+                            f"Side image upload failed: {exc}"
+                        )
+
+            if instance.image_url:
                 instance.save()
+
         formset.save_m2m()
-
-
-@admin.register(FeaturedProduct)
-class FeaturedProductAdmin(admin.ModelAdmin):
-    list_display = ('product', 'display_order', 'is_active', 'product_price', 'created_at')
-    list_editable = ('display_order', 'is_active')
-    search_fields = ('product__name', 'product__sku')
-    list_filter = ('is_active',)
-
-    def product_price(self, obj):
-        return f"₹{obj.product.price:,.2f}"
-    product_price.short_description = "Price"

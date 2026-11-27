@@ -95,8 +95,8 @@ export default function PurchasesPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-[#541D2C]">Suppliers & Procurement</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+          <h1 className="text-2xl font-serif font-bold text-black">Suppliers & Procurement</h1>
+          <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
             Manage jewellery artisans, workshops, procurement orders, and goods receipts.
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function PurchasesPage() {
                 });
                 setPoModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#70283A] hover:bg-[#541D2C] text-white rounded-xl text-xs font-semibold shadow-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#C99A35] hover:bg-[#B88928] text-black rounded-xl text-xs font-semibold shadow-sm transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Create Purchase Order</span>
@@ -120,7 +120,7 @@ export default function PurchasesPage() {
           ) : (
             <button
               onClick={() => setSupplierModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#70283A] hover:bg-[#541D2C] text-white rounded-xl text-xs font-semibold shadow-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#C99A35] hover:bg-[#B88928] text-black rounded-xl text-xs font-semibold shadow-sm transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Add Artisan / Supplier</span>
@@ -129,11 +129,11 @@ export default function PurchasesPage() {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl border border-[#E9E2DC] shadow-sm flex items-center gap-2">
+      <div className="bg-white p-4 rounded-2xl border border-[#EFE5D5] shadow-sm flex items-center gap-2">
         <button
           onClick={() => setActiveTab('orders')}
           className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-            activeTab === 'orders' ? 'bg-[#70283A] text-white' : 'text-gray-600 hover:text-[#70283A]'
+            activeTab === 'orders' ? 'bg-[#C99A35] text-black' : 'text-gray-600 hover:text-black hover:bg-[#F8F1E5]'
           }`}
         >
           Purchase Orders ({purchases.length})
@@ -141,7 +141,7 @@ export default function PurchasesPage() {
         <button
           onClick={() => setActiveTab('suppliers')}
           className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-            activeTab === 'suppliers' ? 'bg-[#70283A] text-white' : 'text-gray-600 hover:text-[#70283A]'
+            activeTab === 'suppliers' ? 'bg-[#C99A35] text-black' : 'text-gray-600 hover:text-black hover:bg-[#F8F1E5]'
           }`}
         >
           Artisans & Suppliers ({suppliers.length})
@@ -149,10 +149,10 @@ export default function PurchasesPage() {
       </div>
 
       {activeTab === 'orders' ? (
-        <div className="bg-white rounded-2xl border border-[#E9E2DC] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#EFE5D5] shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-[#FAF7F2] text-gray-500 font-semibold border-b border-[#E9E2DC]">
+              <thead className="bg-[#F8F1E5] text-black font-semibold border-b border-[#EFE5D5]">
                 <tr>
                   <th className="py-3.5 px-4">PO Number</th>
                   <th className="py-3.5 px-4">Supplier / Artisan</th>
@@ -162,7 +162,7 @@ export default function PurchasesPage() {
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E9E2DC]">
+              <tbody className="divide-y divide-[#EFE5D5]">
                 {loading ? (
                   <tr>
                     <td colSpan="6" className="py-12 text-center text-gray-400">
@@ -171,8 +171,8 @@ export default function PurchasesPage() {
                   </tr>
                 ) : purchases.length > 0 ? (
                   purchases.map((po) => (
-                    <tr key={po.id} className="hover:bg-[#F8F5EF]/60">
-                      <td className="py-3 px-4 font-mono font-bold text-[#541D2C]">{po.po_number}</td>
+                    <tr key={po.id} className="hover:bg-[#F3EBDD]/40">
+                      <td className="py-3 px-4 font-mono font-bold text-black">{po.po_number}</td>
                       <td className="py-3 px-4 font-semibold text-gray-800">{po.supplier?.name || 'Artisan Workshop'}</td>
                       <td className="py-3 px-4 text-gray-500">{po.order_date || 'N/A'}</td>
                       <td className="py-3 px-4 font-bold text-gray-900">{formatINR(po.total_amount)}</td>
@@ -217,10 +217,10 @@ export default function PurchasesPage() {
         </div>
       ) : (
         /* SUPPLIERS TABLE */
-        <div className="bg-white rounded-2xl border border-[#E9E2DC] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#EFE5D5] shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-[#FAF7F2] text-gray-500 font-semibold border-b border-[#E9E2DC]">
+              <thead className="bg-[#F8F1E5] text-black font-semibold border-b border-[#EFE5D5]">
                 <tr>
                   <th className="py-3.5 px-4">Artisan / Firm Name</th>
                   <th className="py-3.5 px-4">Contact Person</th>
@@ -229,11 +229,11 @@ export default function PurchasesPage() {
                   <th className="py-3.5 px-4">GST / Tax ID</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E9E2DC]">
+              <tbody className="divide-y divide-[#EFE5D5]">
                 {suppliers.length > 0 ? (
                   suppliers.map((s) => (
-                    <tr key={s.id} className="hover:bg-[#F8F5EF]/60">
-                      <td className="py-3 px-4 font-semibold text-[#292323]">{s.name}</td>
+                    <tr key={s.id} className="hover:bg-[#F3EBDD]/40">
+                      <td className="py-3 px-4 font-semibold text-gray-900">{s.name}</td>
                       <td className="py-3 px-4 text-gray-700">{s.contact_person || '—'}</td>
                       <td className="py-3 px-4">
                         <div className="text-gray-900">{s.phone || '—'}</div>
@@ -259,10 +259,10 @@ export default function PurchasesPage() {
       {/* CREATE PO MODAL */}
       {poModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#E9E2DC]">
-            <div className="flex items-center justify-between pb-4 border-b border-[#E9E2DC]">
-              <h2 className="text-base font-bold text-[#541D2C]">Create Purchase Order</h2>
-              <button onClick={() => setPoModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#EFE5D5]">
+            <div className="flex items-center justify-between pb-4 border-b border-[#EFE5D5]">
+              <h2 className="text-base font-bold text-black font-serif">Create Purchase Order</h2>
+              <button onClick={() => setPoModalOpen(false)} className="text-gray-400 hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -274,7 +274,7 @@ export default function PurchasesPage() {
                   required
                   value={poForm.supplier_id}
                   onChange={(e) => setPoForm({ ...poForm, supplier_id: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                  className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                 >
                   <option value="">Select</option>
                   {suppliers.map((s) => (
@@ -293,7 +293,7 @@ export default function PurchasesPage() {
                     newItems[0].product_id = e.target.value;
                     setPoForm({ ...poForm, items: newItems });
                   }}
-                  className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                  className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                 >
                   <option value="">Select Item</option>
                   {products.map((p) => (
@@ -315,7 +315,7 @@ export default function PurchasesPage() {
                       newItems[0].quantity = parseInt(e.target.value) || 1;
                       setPoForm({ ...poForm, items: newItems });
                     }}
-                    className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                    className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                   />
                 </div>
                 <div>
@@ -330,22 +330,22 @@ export default function PurchasesPage() {
                       newItems[0].unit_price = parseFloat(e.target.value) || 0;
                       setPoForm({ ...poForm, items: newItems });
                     }}
-                    className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                    className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E9E2DC]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EFE5D5]">
                 <button
                   type="button"
                   onClick={() => setPoModalOpen(false)}
-                  className="px-4 py-2 border border-[#E9E2DC] rounded-xl text-xs font-semibold text-gray-600"
+                  className="px-4 py-2 border border-[#EFE5D5] rounded-xl text-xs font-semibold text-black hover:bg-[#F8F1E5]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#70283A] text-white rounded-xl text-xs font-semibold shadow-sm hover:bg-[#541D2C]"
+                  className="px-5 py-2 bg-[#C99A35] text-black rounded-xl text-xs font-semibold shadow-sm hover:bg-[#B88928]"
                 >
                   Submit Order
                 </button>
@@ -358,10 +358,10 @@ export default function PurchasesPage() {
       {/* CREATE SUPPLIER MODAL */}
       {supplierModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#E9E2DC]">
-            <div className="flex items-center justify-between pb-4 border-b border-[#E9E2DC]">
-              <h2 className="text-base font-bold text-[#541D2C]">Add Artisan / Supplier</h2>
-              <button onClick={() => setSupplierModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#EFE5D5]">
+            <div className="flex items-center justify-between pb-4 border-b border-[#EFE5D5]">
+              <h2 className="text-base font-bold text-black font-serif">Add Artisan / Supplier</h2>
+              <button onClick={() => setSupplierModalOpen(false)} className="text-gray-400 hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -375,7 +375,7 @@ export default function PurchasesPage() {
                   value={supplierForm.name}
                   onChange={(e) => setSupplierForm({ ...supplierForm, name: e.target.value })}
                   placeholder="e.g. Madurai Temple Craftsmen Guild"
-                  className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                  className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                 />
               </div>
 
@@ -385,7 +385,7 @@ export default function PurchasesPage() {
                   type="text"
                   value={supplierForm.contact_person}
                   onChange={(e) => setSupplierForm({ ...supplierForm, contact_person: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                  className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                 />
               </div>
 
@@ -396,7 +396,7 @@ export default function PurchasesPage() {
                     type="text"
                     value={supplierForm.phone}
                     onChange={(e) => setSupplierForm({ ...supplierForm, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                    className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                   />
                 </div>
                 <div>
@@ -405,22 +405,22 @@ export default function PurchasesPage() {
                     type="text"
                     value={supplierForm.city}
                     onChange={(e) => setSupplierForm({ ...supplierForm, city: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#F8F5EF] border border-[#E9E2DC] rounded-xl text-sm"
+                    className="w-full px-3 py-2 bg-[#F8F1E5] border border-[#EFE5D5] rounded-xl text-sm text-black"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#E9E2DC]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#EFE5D5]">
                 <button
                   type="button"
                   onClick={() => setSupplierModalOpen(false)}
-                  className="px-4 py-2 border border-[#E9E2DC] rounded-xl text-xs font-semibold text-gray-600"
+                  className="px-4 py-2 border border-[#EFE5D5] rounded-xl text-xs font-semibold text-black hover:bg-[#F8F1E5]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#70283A] text-white rounded-xl text-xs font-semibold shadow-sm hover:bg-[#541D2C]"
+                  className="px-5 py-2 bg-[#C99A35] text-black rounded-xl text-xs font-semibold shadow-sm hover:bg-[#B88928]"
                 >
                   Save Supplier
                 </button>

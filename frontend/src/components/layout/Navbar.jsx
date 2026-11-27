@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu,
   Search,
   User,
   Heart,
   ShoppingBag,
+  Package,
   X,
+  Check,
 } from 'lucide-react';
 import { navigationLinks } from '../../data/navigation';
 import { siteConfig } from '../../config/siteConfig';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import IconButton from '../common/IconButton';
 import MobileMenu from './MobileMenu';
 
@@ -21,11 +25,14 @@ import MobileMenu from './MobileMenu';
  * Sticky with subtle elevation and border on scroll
  */
 export const Navbar = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { count: wishlistCount } = useWishlist();
+  const { count: wishlistCount, openWishlist } = useWishlist();
+  const { count: cartCount, openCart } = useCart();
 
   // Scroll detection for sticky header refinement
   useEffect(() => {
@@ -103,9 +110,25 @@ export const Navbar = () => {
               {/* Account (Desktop Only) */}
               <div className="hidden lg:block">
                 <IconButton
-                  icon={<User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />}
-                  label="Account"
-                  onClick={() => console.info('Account link clicked')}
+                  icon={
+                    <div className="relative">
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />
+                      {isAuthenticated && (
+                        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-luxury-gold" />
+                      )}
+                    </div>
+                  }
+                  label={isAuthenticated ? (user?.first_name || user?.username || 'Account') : 'Sign In'}
+                  onClick={() => navigate('/signin')}
+                />
+              </div>
+
+              {/* Orders Link (Desktop Only) */}
+              <div className="hidden lg:block">
+                <IconButton
+                  icon={<Package className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />}
+                  label="Orders"
+                  onClick={() => navigate('/orders')}
                 />
               </div>
 
@@ -115,7 +138,7 @@ export const Navbar = () => {
                   icon={<Heart className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />}
                   label="Wishlist"
                   badge={wishlistCount > 0 ? wishlistCount : null}
-                  onClick={() => console.info('Wishlist clicked')}
+                  onClick={openWishlist}
                 />
               </div>
 
@@ -123,8 +146,8 @@ export const Navbar = () => {
               <IconButton
                 icon={<ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.5]" />}
                 label="Shopping Bag"
-                badge={0}
-                onClick={() => console.info('Shopping Bag clicked')}
+                badge={cartCount > 0 ? cartCount : null}
+                onClick={openCart}
               />
             </div>
           </div>
