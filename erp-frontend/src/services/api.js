@@ -13,7 +13,10 @@ function getCookie(name) {
   return cookieValue;
 }
 
-const BASE_URL = '/api/erp';
+const rawApiBase = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+const BASE_URL = rawApiBase
+  ? (rawApiBase.endsWith('/erp') ? rawApiBase : `${rawApiBase}/erp`)
+  : '/api/erp';
 
 async function request(endpoint, options = {}) {
   let url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
@@ -77,6 +80,12 @@ async function request(endpoint, options = {}) {
       );
       error.response = { status: response.status, data };
       throw error;
+    }
+
+    if (contentType.includes('text/html')) {
+      throw new Error(
+        'API request returned HTML instead of JSON. Configure a Render Rewrite rule for /api/* to your Django backend above /* -> /index.html.'
+      );
     }
 
     return { data, status: response.status, headers: response.headers };
